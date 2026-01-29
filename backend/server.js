@@ -18,6 +18,8 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/public', express.static(path.join(__dirname, '../frontend/public')));
 app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
+// Fix: uploads is in root, so use ../uploads relative to backend/server.js
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/js', express.static(path.join(__dirname, '../frontend/js')));
 
 // API Routes

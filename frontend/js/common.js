@@ -78,7 +78,25 @@ function requireAuth() {
     }
 }
 
+// Secure Logout
 function logout() {
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.clear(); // Clear any session data
     window.location.href = '../public/index.html';
 }
+
+// Protect Admin Pages - Run this on admin pages
+function checkAdminAuth() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'admin') {
+        window.location.replace('../public/index.html'); // Use replace to prevent back navigation
+    }
+}
+
+// Global Back Button Protection (Prevent restoring from bfcache)
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});

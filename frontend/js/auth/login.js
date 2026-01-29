@@ -33,12 +33,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         localStorage.setItem('user', JSON.stringify(data.user));
 
         // Redirect based on role
-        if (data.user.role === 'seller') {
-            window.location.href = '../seller/dashboard.html';
-        } else if (data.user.role === 'admin') {
+        // Redirect based on role
+        if (data.user.role === 'admin') {
             window.location.href = '../admin/dashboard.html';
         } else {
-            window.location.href = '../buyer/dashboard.html';
+            // Buyers and Sellers go to Home Page
+            window.location.href = '../public/index.html';
         }
 
     } catch (err) {

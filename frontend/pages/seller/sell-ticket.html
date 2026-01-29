@@ -62,12 +62,16 @@
                         </div>
                     </div>
 
-                    <!-- File Upload Mock -->
-                    <div
-                        style="margin-bottom: 30px; padding: 30px; border: 2px dashed var(--glass-border); border-radius: 10px; text-align: center; cursor: pointer;">
+                    <!-- File Upload Area -->
+                    <div id="dropZone"
+                        style="margin-bottom: 30px; padding: 30px; border: 2px dashed var(--glass-border); border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s;">
+                        <input type="file" id="ticketFile" hidden accept=".pdf,.jpg,.jpeg,.png">
                         <i class="fas fa-cloud-upload-alt"
                             style="font-size: 30px; color: var(--primary); margin-bottom: 10px;"></i>
-                        <p style="color: var(--text-gray);">Drag & drop ticket PDF or click to browse</p>
+                        <p style="color: var(--text-gray); margin-bottom: 5px;">Drag & drop ticket PDF or click to
+                            browse</p>
+                        <p id="fileName"
+                            style="color: var(--primary); font-weight: 600; font-size: 0.9rem; min-height: 20px;"></p>
                     </div>
 
                     <button type="button" class="btn btn-primary"
@@ -80,6 +84,7 @@
     </section>
     <div id="footer-placeholder"></div>
     <script src="../../js/common.js"></script>
+    <script src="../../js/seller/sell-ticket.js"></script>
 </body>
 
 </html>

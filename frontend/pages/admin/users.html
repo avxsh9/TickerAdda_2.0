@@ -6,28 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Admin</title>
     <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <script>
+        // Immediate Auth Check
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        if (!token || !user || user.role !== 'admin') {
+            window.location.replace('../auth/login.html');
+        }
+    </script>
 </head>
 
 <body>
     <div id="navbar-placeholder"></div>
-    <div class="container section">
-        <h1>User Management</h1>
-        <p>View and manage registered users.</p>
 
-        <div class="table-container">
-            <table class="table" id="usersTable">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Joined Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Users will be loaded here -->
-                </tbody>
-            </table>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <h3 class="mb-4" style="color: var(--primary-color); padding-left: 15px;">Admin Panel</h3>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="users.html" class="active"><i class="fas fa-users"></i> <span>Manage Users</span></a></li>
+                <li><a href="approve-tickets.html"><i class="fas fa-check-double"></i> <span>Approve Tickets</span></a>
+                </li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-content">
+            <h1 class="gradient-text">User Management</h1>
+            <p class="subtitle mb-4">View and manage registered users.</p>
+
+            <div class="glass-card-container">
+                <div class="table-container">
+                    <table class="table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -35,22 +62,49 @@
         .table-container {
             margin-top: 20px;
             overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: #fff;
         }
 
         .table th,
         .table td {
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 15px 20px;
             text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .table th {
-            background-color: #f4f4f4;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Glass Card wrapper */
+        .glass-card-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
         }
     </style>
 
