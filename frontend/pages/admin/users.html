@@ -145,35 +145,59 @@
             const tbody = document.querySelector('#usersTable tbody');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>';
 
-            // Check if we have an endpoint, for now we will MOCK it since backend might not have this
-            // Or we check if I added it... I didn't verify backend user endpoint.
-            // Let's assume we need to show dummy data OR fetch real if exists.
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '../auth/login.html';
+                    return;
+                }
 
-            // Checking common.js -> logout is there.
-            // For now, let's just show the current user + dummy users to demonstrate UI.
+                const res = await fetch('/api/users', {
+                    headers: { 'x-auth-token': token }
+                });
 
-            const currentUser = JSON.parse(localStorage.getItem('user'));
+                if (!res.ok) {
+                    throw new Error('Failed to fetch users');
+                }
 
-            const dummyUsers = [
-                { name: 'Super Admin', email: 'admin@ticketadda.in', role: 'admin', createdAt: new Date() },
-                { name: 'Avinash Prasad', email: currentUser.email, role: currentUser.role, createdAt: new Date() },
-                { name: 'Rahul Sharma', email: 'rahul@gmail.com', role: 'buyer', createdAt: new Date(Date.now() - 86400000) },
-                { name: 'Priya Singh', email: 'priya@outlook.com', role: 'seller', createdAt: new Date(Date.now() - 172800000) }
-            ];
+                const users = await res.json();
 
-            // Render
-            let html = '';
-            dummyUsers.forEach(u => {
-                html += `
-                    <tr>
-                        <td style="font-weight: 500;">${u.name}</td>
-                        <td style="color: #aaa;">${u.email}</td>
-                        <td><span class="badge ${u.role === 'admin' ? 'badge-danger' : (u.role === 'seller' ? 'badge-warning' : 'badge-success')}">${u.role}</span></td>
-                        <td>${new Date(u.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+                let html = '';
+                if (users.length === 0) {
+                    html = '<tr><td colspan="4" style="text-align:center;">No users found.</td></tr>';
+                } else {
+                    users.forEach(u => {
+                        const joinedDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', {
+                            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        }) : 'N/A';
+
+                        html += `
+                            <tr>
+                                <td style="font-weight: 500;">
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <div style="width:30px; height:30px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold;">
+                                            ${u.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        ${u.name}
+                                    </div>
+                                </td>
+                                <td style="color: #aaa;">${u.email}</td>
+                                <td>
+                                    <span class="badge ${u.role === 'admin' ? 'badge-danger' : (u.role === 'seller' ? 'badge-warning' : 'badge-success')}">
+                                        ${u.role.toUpperCase()}
+                                    </span>
+                                </td>
+                                <td>${joinedDate}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                tbody.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="4" style="color:red; text-align:center;">Error loading users.</td></tr>';
+            }
         }
     </script>
 </body>

@@ -137,6 +137,18 @@
 
     <!-- Scripts -->
     <script src="../../js/common.js"></script>
+    <!-- Image Preview Modal -->
+    <div id="proofModal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div style="position: relative; max-width: 90%; max-height: 90%;">
+            <button onclick="closeModal()"
+                style="position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;
+                Close</button>
+            <img id="modalImage" src="" alt="Ticket Proof"
+                style="max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+        </div>
+    </div>
+
     <script src="../../js/admin/approve-tickets.js"></script>
     <script>
         // Additional UI logic if needed

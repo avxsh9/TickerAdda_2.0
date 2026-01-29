@@ -14,7 +14,7 @@ async function loadTickets(type) {
     try {
         const endpoint = type === 'pending' ? '/api/tickets/pending' : '/api/tickets/history';
         const res = await fetch(endpoint, {
-            headers: { 'x-auth-token': token }
+            headers: { 'x-auth-token': authToken }
         });
         const tickets = await res.json();
 
@@ -56,8 +56,21 @@ async function loadTickets(type) {
                 `;
             }
 
+            // Image Logic
+            // Image Logic
+            // Check if getEventImageUrl is defined, otherwise fallback
+            let fallbackImage = 'https://via.placeholder.com/400x200?text=No+Proof';
+            if (typeof getEventImageUrl === 'function') {
+                fallbackImage = getEventImageUrl(ticket.event);
+            }
+
+            const imageUrl = ticket.fileUrl ? `/${ticket.fileUrl}` : fallbackImage;
+
             html += `
                 <div class="ticket-card">
+                    <div class="ticket-image" style="height: 150px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <img src="${imageUrl}" alt="Ticket Proof" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open('${imageUrl}', '_blank')">
+                    </div>
                     <div class="ticket-status-bar ${statusClass}"></div>
                     <div class="card-body">
                         <div class="card-header">
@@ -81,6 +94,9 @@ async function loadTickets(type) {
                         </div>
 
                         <div class="card-actions">
+                            <button class="btn-action" style="background: rgba(255,255,255,0.1); color: white;" onclick="openModal('${imageUrl}')">
+                                <i class="fas fa-eye"></i> View Proof
+                            </button>
                             ${actionsHtml}
                         </div>
                     </div>
@@ -96,6 +112,26 @@ async function loadTickets(type) {
         Swal.fire('Error', 'Failed to load tickets', 'error');
     }
 }
+
+// Modal Functions
+function openModal(url) {
+    const modal = document.getElementById('proofModal');
+    const img = document.getElementById('modalImage');
+    img.src = url;
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('proofModal').style.display = 'none';
+}
+
+// Close on outside click
+window.onclick = function (event) {
+    const modal = document.getElementById('proofModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+};
 
 
 

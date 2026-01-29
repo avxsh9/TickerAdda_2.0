@@ -145,3 +145,39 @@ exports.getStats = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+// @desc    Update ticket status (Admin)
+// @route   PUT /api/tickets/:id/status
+// @access  Private (Admin)
+exports.updateTicketStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+
+        // Force update of timestamp
+        let ticket = await Ticket.findById(req.params.id);
+        if (!ticket) return res.status(404).json({ msg: 'Ticket not found' });
+
+        ticket.status = status;
+        ticket.updatedAt = new Date(); // Manually set to ensure "Approved Today" works
+        await ticket.save();
+
+        res.json(ticket);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Get Ticket History (Approved/Rejected)
+// @route   GET /api/tickets/history
+// @access  Private (Admin)
+exports.getTicketHistory = async (req, res) => {
+    try {
+        const tickets = await Ticket.find({
+            status: { $in: ['approved', 'rejected'] }
+        }).populate('seller', 'name email').sort({ updatedAt: -1 });
+        res.json(tickets);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

@@ -8,6 +8,7 @@ const TicketSchema = new mongoose.Schema({
     section: { type: String },
     row: { type: String },
     seat: { type: String },
+    fileUrl: { type: String }, // Path to uploaded proof
     status: { type: String, enum: ['available', 'sold', 'pending', 'approved', 'rejected'], default: 'pending' },
     createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
