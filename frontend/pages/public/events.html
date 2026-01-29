@@ -23,10 +23,11 @@
 
             <!-- Filter Pills -->
             <div class="hero-categories" style="justify-content: center; margin-top: 30px;">
-                <button class="category-pill active" onclick="filterEvents('all')">All</button>
-                <button class="category-pill" onclick="filterEvents('concerts')">Concerts</button>
-                <button class="category-pill" onclick="filterEvents('sports')">Sports</button>
-                <button class="category-pill" onclick="filterEvents('comedy')">Comedy</button>
+                <button class="category-pill filter-btn active" data-category="all">All</button>
+                <button class="category-pill filter-btn" data-category="Concert">Concerts</button>
+                <button class="category-pill filter-btn" data-category="Sports">Sports</button>
+                <button class="category-pill filter-btn" data-category="Comedy">Comedy</button>
+                <button class="category-pill filter-btn" data-category="Theatre">Theatre</button>
             </div>
         </div>
     </section>
@@ -36,29 +37,17 @@
         <div class="container">
             <div class="event-grid" id="eventsGrid">
                 <!-- Events will be loaded dynamically here -->
-                <p style="text-align: center; grid-column: 1/-1; color: var(--text-gray);">Loading events...</p>
+                <div style="grid-column: 1/-1; text-align: center; color: var(--text-gray); padding: 40px;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 10px;">Loading live events...</p>
+                </div>
             </div>
         </div>
     </section>
 
     <div id="footer-placeholder"></div>
     <script src="../../js/common.js"></script>
-    <script>
-        function filterEvents(category) {
-            // Update active pill
-            document.querySelectorAll('.category-pill').forEach(btn => {
-                if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === 'All')) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            // Very simple filter (mock): Just randomize or alert for now since we don't have category attributes on cards easily reachable without parsing.
-            // Actually, let's add attributes to cards for cleaner demo.
-            alert('Filtering by ' + category + '... (Showing all for demo)');
-        }
-    </script>
+    <script src="../../js/public/events.js"></script>
 </body>
 
 </html>

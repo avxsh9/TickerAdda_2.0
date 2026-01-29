@@ -1,4 +1,8 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
+    loadListings();
+});
+
+async function loadListings() {
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = '../auth/login.html';
@@ -6,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const container = document.getElementById('my-listings-container');
+    container.innerHTML = '<div style="text-align: center; color: #aaa; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Checking status...</div>';
 
     try {
         const res = await fetch('/api/tickets/my-tickets', {
@@ -14,16 +19,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tickets = await res.json();
 
         if (tickets.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color: #aaa;">You haven\'t listed any tickets yet.</p>';
+            container.innerHTML = `
+                <div style="text-align:center; padding: 40px; background: rgba(255,255,255,0.02); border-radius: 10px;">
+                    <i class="fas fa-ticket-alt" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 20px;"></i>
+                    <p style="color: #aaa; margin-bottom: 20px;">You haven't listed any tickets yet.</p>
+                    <a href="sell-ticket.html" class="btn btn-primary">Sell Your First Ticket</a>
+                </div>`;
             return;
         }
 
         let html = '<div class="listings-grid">';
         tickets.forEach(ticket => {
             let statusBadge = '';
-            if (ticket.status === 'pending') statusBadge = '<span class="badge badge-warning">Pending</span>';
-            else if (ticket.status === 'approved') statusBadge = '<span class="badge badge-success">Live</span>';
-            else statusBadge = '<span class="badge badge-danger">Rejected</span>';
+            let statusText = '';
+
+            // Explicitly checking string values
+            if (ticket.status === 'pending') {
+                statusBadge = '<span class="badge badge-warning"><i class="far fa-clock"></i> Pending Approval</span>';
+                statusText = 'Waiting for admin review';
+            } else if (ticket.status === 'approved') {
+                statusBadge = '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Live</span>';
+                statusText = 'Visible on Marketplace';
+            } else if (ticket.status === 'rejected') {
+                statusBadge = '<span class="badge badge-danger"><i class="fas fa-times-circle"></i> Rejected</span>';
+                statusText = 'Listing declined';
+            } else {
+                statusBadge = `<span class="badge badge-warning">${ticket.status}</span>`;
+            }
 
             html += `
                 <div class="listing-card">
@@ -32,10 +54,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         ${statusBadge}
                     </div>
                     <div class="card-body">
-                        <p><strong>Category:</strong> ${ticket.category}</p>
-                        <p><strong>Price:</strong> ₹${ticket.price}</p>
-                        <p><strong>Quantity:</strong> ${ticket.quantity}</p>
-                        <p><small>Listed on: ${new Date(ticket.createdAt).toLocaleDateString()}</small></p>
+                        <p><strong>Category</strong> <span>${ticket.category}</span></p>
+                        <p><strong>Seat</strong> <span>${ticket.seat || 'N/A'}</span></p>
+                        <p><strong>Price</strong> <span>₹${ticket.price}</span></p>
+                        <p><strong>Quantity</strong> <span>${ticket.quantity}</span></p>
+                    </div>
+                    <div class="card-footer">
+                        ${statusText} • Listed on: ${new Date(ticket.createdAt).toLocaleDateString()}
                     </div>
                 </div>
             `;
@@ -45,9 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (err) {
         console.error(err);
-        container.innerHTML = '<p>Error loading listings.</p>';
+        container.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error loading listings. Please try again.</p>';
     }
-});
+}
 
 function getEventName(id) {
     const events = {
@@ -55,5 +80,6 @@ function getEventName(id) {
         '2': 'IPL 2026: MI vs CSK',
         '3': 'Coldplay World Tour'
     };
-    return events[id] || 'Unknown Event';
+    // If ID is not in map (e.g. if we add more events later), just show ID or "Event"
+    return events[id] || 'Event';
 }

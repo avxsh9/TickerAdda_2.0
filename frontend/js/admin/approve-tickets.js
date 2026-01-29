@@ -1,130 +1,175 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = '../auth/login.html';
-        return;
-    }
+// Token is already declared in HTML, or we fetch it again safely
+const authToken = localStorage.getItem('token');
 
-    const container = document.querySelector('.glass-card-container');
+async function loadTickets(type) {
+    const container = document.getElementById('ticketsContainer');
 
-    // Load Pending Tickets
+    // Show Skeletons while loading
+    container.innerHTML = `
+        <div class="ticket-card" style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"><div class="skeleton" style="width: 100%; height: 100%; opacity: 0.1;"></div></div>
+        <div class="ticket-card" style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"><div class="skeleton" style="width: 100%; height: 100%; opacity: 0.1;"></div></div>
+        <div class="ticket-card" style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"><div class="skeleton" style="width: 100%; height: 100%; opacity: 0.1;"></div></div>
+    `;
+
     try {
-        const res = await fetch('/api/tickets/pending', {
+        const endpoint = type === 'pending' ? '/api/tickets/pending' : '/api/tickets/history';
+        const res = await fetch(endpoint, {
             headers: { 'x-auth-token': token }
         });
         const tickets = await res.json();
 
+        updateStats(); // Fetch global stats separately
+
         if (tickets.length === 0) {
-            // Keep the empty state if no tickets
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #888;">
+                    <div style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"><i class="fas fa-clipboard-check"></i></div>
+                    <h3>No tickets found</h3>
+                    <p>There are no tickets in this category right now.</p>
+                </div>
+            `;
             return;
         }
 
-        // Generate Ticket Cards
-        let html = '<div class="approval-grid">';
+        let html = '';
         tickets.forEach(ticket => {
-            html += `
-                <div class="approval-card">
-                    <div class="ticket-header">
-                        <h3>${getEventName(ticket.event)}</h3>
-                        <span class="badge badge-warning">Pending</span>
+
+            // Status Bar Color
+            const statusClass = ticket.status === 'pending' ? 'status-pending' : (ticket.status === 'approved' ? 'status-approved' : 'status-rejected');
+
+            // Actions Logic
+            let actionsHtml = '';
+            if (ticket.status === 'pending') {
+                actionsHtml = `
+                    <button class="btn-action btn-approve" onclick="confirmAction('${ticket._id}', 'approve')">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn-action btn-reject" onclick="confirmAction('${ticket._id}', 'reject')">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                `;
+            } else {
+                actionsHtml = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; color: #aaa; font-size: 0.85rem;">
+                        Processed on ${new Date(ticket.updatedAt || Date.now()).toLocaleDateString()}
                     </div>
-                    <div class="ticket-details">
-                        <p><strong>Seller:</strong> ${ticket.seller ? ticket.seller.name : 'Unknown'}</p>
-                        <p><strong>Category:</strong> ${ticket.category}</p>
-                        <p><strong>Seat:</strong> ${ticket.seat || 'Any'}</p>
-                        <div class="file-preview" style="margin: 15px 0; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-file-pdf" style="color: #e74c3c; font-size: 24px;"></i>
+                `;
+            }
+
+            html += `
+                <div class="ticket-card">
+                    <div class="ticket-status-bar ${statusClass}"></div>
+                    <div class="card-body">
+                        <div class="card-header">
                             <div>
-                                <p style="margin: 0; font-size: 0.85rem; color: #fff;">Ticket Attachment</p>
-                                <button onclick="openPreview('/${ticket.fileUrl}')" style="background: none; border: none; font-size: 0.8rem; color: var(--primary-color); cursor: pointer; padding: 0; text-decoration: underline;">Preview File</button>
+                                <div class="event-name">${ticket.event}</div>
+                                <div class="ticket-id">ID: ${ticket._id.slice(-6).toUpperCase()}</div>
+                            </div>
+                            <div class="card-price">₹${ticket.price}</div>
+                        </div>
+
+                        <div class="info-row"><i class="fas fa-calendar-alt"></i> ${new Date().toLocaleDateString()}</div>
+                        <div class="info-row"><i class="fas fa-chair"></i> ${ticket.seat || 'General'}</div>
+                        <div class="info-row"><i class="fas fa-tag"></i> ${ticket.category}</div>
+
+                        <div class="seller-info">
+                            <div class="seller-avatar">${ticket.seller?.name?.charAt(0) || 'U'}</div>
+                            <div>
+                                <div class="seller-name">${ticket.seller?.name || 'Unknown Seller'}</div>
+                                <div class="seller-email">${ticket.seller?.email || 'No Email'}</div>
                             </div>
                         </div>
-                        <p><strong>Price:</strong> ₹${ticket.price} x ${ticket.quantity}</p>
-                        <p><strong>Total:</strong> ₹${ticket.price * ticket.quantity}</p>
-                    </div>
-                    <div class="ticket-actions">
-                        <button class="btn-approve" onclick="updateStatus('${ticket._id}', 'approved')">
-                            <i class="fas fa-check"></i> Approve
-                        </button>
-                        <button class="btn-reject" onclick="updateStatus('${ticket._id}', 'rejected')">
-                            <i class="fas fa-times"></i> Reject
-                        </button>
+
+                        <div class="card-actions">
+                            ${actionsHtml}
+                        </div>
                     </div>
                 </div>
             `;
         });
-        html += '</div>';
 
         container.innerHTML = html;
 
-        // Modal Logic
-        const modal = document.getElementById('previewModal');
-        const span = document.getElementsByClassName("close-modal")[0];
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p style="color:red; text-align:center;">Error loading tickets.</p>';
+        Swal.fire('Error', 'Failed to load tickets', 'error');
+    }
+}
 
-        span.onclick = function () {
-            modal.style.display = "none";
+
+
+async function updateStats() {
+    try {
+        const res = await fetch('/api/tickets/stats', {
+            headers: { 'x-auth-token': authToken }
+        });
+        const stats = await res.json();
+
+        if (document.getElementById('statPending')) {
+            document.getElementById('statPending').innerText = stats.pending || 0;
         }
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+        if (document.getElementById('statApproved')) {
+            document.getElementById('statApproved').innerText = stats.approvedToday || 0;
+        }
+        if (document.getElementById('statTotalVal')) {
+            document.getElementById('statTotalVal').innerText = '₹' + (stats.totalValue || 0).toLocaleString();
         }
 
     } catch (err) {
-        console.error('Error fetching tickets:', err);
+        console.error('Error fetching stats:', err);
     }
-});
-
-function openPreview(url) {
-    const modal = document.getElementById('previewModal');
-    const container = document.getElementById('fileContainer');
-
-    // Determine file type based on extension
-    const ext = url.split('.').pop().toLowerCase();
-
-    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-        container.innerHTML = `<img src="${url}" alt="Ticket Preview">`;
-    } else if (ext === 'pdf') {
-        container.innerHTML = `<iframe src="${url}"></iframe>`;
-    } else {
-        container.innerHTML = `<p>File type not supported for preview: <a href="${url}" target="_blank">Download File</a></p>`;
-    }
-
-    modal.style.display = "block";
 }
 
-function getEventName(id) {
-    const events = {
-        '1': 'Arijit Singh Live',
-        '2': 'IPL 2026: MI vs CSK',
-        '3': 'Coldplay World Tour'
-    };
-    return events[id] || 'Unknown Event';
+async function confirmAction(id, action) {
+    const result = await Swal.fire({
+        title: action === 'approve' ? 'Approve Ticket?' : 'Reject Ticket?',
+        text: "This action will update the ticket's public visibility.",
+        icon: action === 'approve' ? 'question' : 'warning',
+        showCancelButton: true,
+        confirmButtonColor: action === 'approve' ? '#10b981' : '#ef4444',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: action === 'approve' ? 'Yes, Approve!' : 'Yes, Reject!',
+        background: '#18181b',
+        color: '#fff'
+    });
+
+    if (result.isConfirmed) {
+        processTicket(id, action);
+    }
 }
 
-async function updateStatus(id, status) {
-    const token = localStorage.getItem('token');
-    if (!confirm(`Are you sure you want to ${status} this ticket?`)) return;
-
+async function processTicket(id, action) {
     try {
+        // Backend expects: PUT /api/tickets/:id/status
+        // Body: { status: 'approved' } or { status: 'rejected' }
+        const newStatus = action === 'approve' ? 'approved' : 'rejected';
+
         const res = await fetch(`/api/tickets/${id}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'x-auth-token': token
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ status: newStatus })
         });
 
         if (res.ok) {
-            alert(`Ticket ${status} successfully!`);
-            window.location.reload();
+            Swal.fire({
+                title: 'Success!',
+                text: `Ticket has been ${action}d.`,
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+                background: '#18181b',
+                color: '#fff'
+            });
+            setTimeout(() => loadTickets('pending'), 1000); // Refresh
         } else {
-            alert('Failed to update status');
+            throw new Error('Failed to update');
         }
     } catch (err) {
         console.error(err);
-        alert('Server Error');
+        Swal.fire('Error', 'Something went wrong', 'error');
     }
 }

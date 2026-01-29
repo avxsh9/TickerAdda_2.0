@@ -11,6 +11,7 @@ router.get('/approved', ticketController.getApprovedTickets);
 router.post('/', [auth, upload.single('ticketFile')], ticketController.createTicket);
 router.get('/my-tickets', auth, ticketController.getMyTickets);
 router.get('/pending', auth, ticketController.getPendingTickets); // Needs Admin check ideally, but auth is first step
+router.get('/history', auth, ticketController.getTicketHistory);
 router.put('/:id/status', auth, ticketController.updateTicketStatus);
 
 module.exports = router;

@@ -105,3 +105,21 @@ exports.getMe = async (req, res) => {
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 };
+
+// @desc    Get all users (Admin only)
+// @route   GET /api/auth/users
+// @access  Private (Admin)
+exports.getAllUsers = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (user.role !== 'admin') {
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        const users = await User.find().select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

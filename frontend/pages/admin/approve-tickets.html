@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Approve Tickets - Admin</title>
+    <title>Admin Dashboard - TickerAdda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin.css"> <!-- New Premium CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Better Alerts -->
     <script>
-        // Immediate Auth Check
+        // Security Check
         const user = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
         if (!token || !user || user.role !== 'admin') {
@@ -18,207 +22,138 @@
 </head>
 
 <body>
-    <div id="navbar-placeholder"></div>
-
     <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="admin-sidebar">
-            <h3 class="mb-4" style="color: var(--primary-color); padding-left: 15px;">Admin Panel</h3>
-            <ul class="sidebar-menu">
-                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-                <li><a href="users.html"><i class="fas fa-users"></i> <span>Manage Users</span></a></li>
-                <li><a href="approve-tickets.html" class="active"><i class="fas fa-check-double"></i> <span>Approve
-                            Tickets</span></a></li>
-                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
-            </ul>
-        </div>
-
-        <div class="admin-content">
-            <h1 class="gradient-text">Ticket Approvals</h1>
-            <p class="subtitle mb-4">Review and verify new ticket listings.</p>
-
-            <div class="glass-card-container">
-                <div class="empty-state">
-                    <i class="fas fa-check-circle"
-                        style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
-                    <h3>All Caught Up!</h3>
-                    <p>There are no pending tickets to approve at the moment.</p>
+        <!-- Premium Sidebar -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    TICKET<span>ADDA</span> <span
+                        style="font-size: 10px; background: #333; padding: 2px 6px; border-radius: 4px; vertical-align: middle;">ADMIN</span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <style>
-        .glass-card-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            text-align: center;
-        }
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="active" onclick="showSection('approvals')">
+                        <i class="fas fa-check-circle"></i> <span>Approvals</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="users.html">
+                        <i class="fas fa-users"></i> <span>User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-chart-pie"></i> <span>Analytics (Soon)</span>
+                    </a>
+                </li>
+                <li style="margin-top: auto;">
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
 
-        .empty-state {
-            padding: 40px;
-            opacity: 0.8;
-        }
-    </style>
-    <style>
-        .approval-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .approval-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: left;
-        }
-
-        .ticket-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-        }
-
-        .ticket-header h3 {
-            font-size: 1.1rem;
-            margin: 0;
-            color: white;
-        }
-
-        .ticket-details p {
-            color: #ccc;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        .badge-warning {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ffc107;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
-        .ticket-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-approve,
-        .btn-reject {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: white;
-            transition: 0.2s;
-        }
-
-        .btn-approve {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            border: 1px solid #2ecc71;
-        }
-
-        .btn-approve:hover {
-            background: #2ecc71;
-            color: white;
-        }
-
-        .btn-reject {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-        }
-
-        .btn-reject:hover {
-            background: #e74c3c;
-            color: white;
-        }
-    </style>
-    <!-- File Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3 style="margin-bottom: 15px; color: var(--primary-color);">Ticket Attachment</h3>
-            <div id="fileContainer">
-                <!-- Content will be injected here -->
+            <!-- Mini User Profile at Bottom -->
+            <div
+                style="padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+                <div
+                    style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    A</div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; color: white;">Avinash</div>
+                    <div style="font-size: 11px; color: #888;">Super Admin</div>
+                </div>
             </div>
-        </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="admin-content">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-title">
+                    <h1>Ticket Approvals</h1>
+                    <p>Manage and verify incoming ticket listings.</p>
+                </div>
+                <button onclick="loadTickets(currentType)" class="btn btn-outline btn-sm"><i
+                        class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="statPending">0</h3>
+                        <p>Pending Review</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="statApproved">0</h3>
+                        <p>Approved Today</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="statTotalVal">₹0</h3>
+                        <p>Total Value</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="custom-tabs">
+                <button id="btnPending" class="tab-btn active" onclick="switchTab('pending')">Pending Requests</button>
+                <button id="btnHistory" class="tab-btn" onclick="switchTab('history')">Approval History</button>
+            </div>
+
+            <!-- Content Grid -->
+            <div id="ticketsContainer" class="tickets-grid">
+                <!-- Skeletons for Loading -->
+                <div class="ticket-card" style="height: 200px;">
+                    <div class="skeleton" style="width: 100%; height: 100%;"></div>
+                </div>
+                <div class="ticket-card" style="height: 200px;">
+                    <div class="skeleton" style="width: 100%; height: 100%;"></div>
+                </div>
+                <div class="ticket-card" style="height: 200px;">
+                    <div class="skeleton" style="width: 100%; height: 100%;"></div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: #1a1a1a;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            width: 80%;
-            max-width: 800px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .close-modal {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            right: 20px;
-            top: 10px;
-        }
-
-        .close-modal:hover,
-        .close-modal:focus {
-            color: white;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #fileContainer img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        #fileContainer iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
-            border-radius: 8px;
-        }
-    </style>
-    <div id="footer-placeholder"></div>
+    <!-- Scripts -->
     <script src="../../js/common.js"></script>
     <script src="../../js/admin/approve-tickets.js"></script>
+    <script>
+        // Additional UI logic if needed
+        let currentType = 'pending';
+
+        function switchTab(type) {
+            currentType = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(type === 'pending' ? 'btnPending' : 'btnHistory').classList.add('active');
+            loadTickets(type);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTickets('pending');
+        });
+    </script>
 </body>
 
 </html>

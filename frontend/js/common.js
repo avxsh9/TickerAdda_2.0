@@ -62,6 +62,16 @@ function checkAuthStatus() {
         // Add User Name if possible
         const navLinks = document.querySelector('.nav-links');
         if (navLinks) {
+            // Check for Admin Role and Add Dashboard Link
+            if (user.role === 'admin') {
+                const adminLink = document.createElement('a');
+                adminLink.href = '/pages/admin/approve-tickets.html'; // Direct compatibility with existing flows
+                adminLink.className = 'nav-link';
+                adminLink.style.color = '#ef4444'; // Make it distinct (Red/Orange)
+                adminLink.innerHTML = '<i class="fas fa-shield-alt"></i> Admin Panel';
+                navLinks.insertBefore(adminLink, navLinks.firstChild); // Add to start or before "Sell Tickets"
+            }
+
             const userBadge = document.createElement('span');
             userBadge.style.color = '#fff';
             userBadge.style.marginLeft = '10px';
@@ -100,3 +110,27 @@ window.addEventListener('pageshow', function (event) {
         window.location.reload();
     }
 });
+
+// Helper to get auto-images based on keywords
+function getEventImageUrl(eventName) {
+    if (!eventName) return 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1000'; // Default Concert
+
+    const name = eventName.toLowerCase();
+
+    // Cricket / IPL
+    if (name.includes('ipl') || name.includes('cricket') || name.includes('match') || name.includes('mi vs') || name.includes('csk')) {
+        return 'https://images.unsplash.com/photo-1531415074968-bc924375b263?auto=format&fit=crop&q=80&w=1000';
+    }
+    // Concerts / Music
+    if (name.includes('arijit') || name.includes('concert') || name.includes('coldplay') || name.includes('music') || name.includes('live')) {
+        if (name.includes('arijit')) return 'https://stat4.bollywoodhungama.in/wp-content/uploads/2024/02/Arijit-Singh-1.jpg'; // Specific Arijit
+        if (name.includes('coldplay')) return 'https://images.unsplash.com/photo-1459749411177-d4a428c3e8cb?auto=format&fit=crop&q=80&w=1000'; // Concert crowd
+        return 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=1000'; // Generic Concert
+    }
+    // Comedy
+    if (name.includes('comedy') || name.includes('standup') || name.includes('laugh')) {
+        return 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&q=80&w=1000';
+    }
+
+    return 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1000';
+}
