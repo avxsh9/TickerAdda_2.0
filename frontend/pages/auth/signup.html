@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - TickerAdda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="icon" type="image/png" href="../../public/images/logo.png">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="section">
+        <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+            <div
+                style="background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); width: 100%; max-width: 400px; text-align: center;">
+                <h2 style="margin-bottom: 20px;">Create Account</h2>
+                <form id="signupForm">
+                    <div style="margin-bottom: 15px; text-align: left;">
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 5px;">Full Name</label>
+                        <input type="text" placeholder="Enter your name"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                    </div>
+                    <div style="margin-bottom: 15px; text-align: left;">
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 5px;">Email</label>
+                        <input type="email" placeholder="Enter your email"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                    </div>
+                    <div style="margin-bottom: 25px; text-align: left;">
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 5px;">Password</label>
+                        <input type="password" placeholder="Create a password"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Sign
+                        Up</button>
+                    <p style="margin-top: 20px; color: var(--text-gray); font-size: 14px;">
+                        Already have an account? <a href="login.html" style="color: var(--primary);">Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../js/common.js"></script>
+    <script src="../../js/auth/signup.js"></script>
+</body>
+
+</html>

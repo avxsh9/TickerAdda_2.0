@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - TickerAdda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="section" style="padding-top: 100px;">
+        <div class="container" style="max-width: 900px;">
+            <h1 style="margin-bottom: 30px;">Checkout</h1>
+
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
+                <!-- Left: Payment Details -->
+                <div>
+                    <!-- Ticket Summary (Editable Mock) -->
+                    <div
+                        style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px;">Ticket Details</h3>
+                        <div>
+                            <div style="font-weight: 600; font-size: 18px;">Arijit Singh Live</div>
+                            <div style="color: var(--text-gray); margin-bottom: 10px;">Sat, 15 Nov • 7:00 PM | NSCI Dome
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                                <span>2 x Diamond Stand</span>
+                                <span>₹9,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <div
+                        style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                        <h3 style="margin-bottom: 20px;">Payment Method</h3>
+
+                        <form id="checkoutForm">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px;">Card Number</label>
+                                <div style="position: relative;">
+                                    <input type="text" placeholder="0000 0000 0000 0000"
+                                        style="width: 100%; padding: 12px 12px 12px 40px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                                    <i class="fas fa-credit-card"
+                                        style="position: absolute; left: 12px; top: 14px; color: var(--text-gray);"></i>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px;">Expiry</label>
+                                    <input type="text" placeholder="MM/YY"
+                                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px;">CVV</label>
+                                    <input type="text" placeholder="123"
+                                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"
+                                style="width: 100%; justify-content: center; font-size: 18px;">
+                                Pay ₹9,450
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: Order Summary -->
+                <div>
+                    <div
+                        style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                        <h3 style="margin-bottom: 20px;">Order Summary</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: var(--text-gray);">Subtotal</span>
+                            <span>₹9,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: var(--text-gray);">Booking Fee</span>
+                            <span>₹450</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 0px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-weight: 700; font-size: 20px;">
+                            <span>Total</span>
+                            <span style="color: var(--primary);">₹9,450</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-gray);">
+                        By clicking Pay, you agree to our <a href="#" style="color: var(--primary);">Terms of Use</a>.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+    <script src="../../js/common.js"></script>
+    <script>
+        document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Payment Successful! Your tickets have been sent to your email.');
+            // Mock redirect to dashboard
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events - TickerAdda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <!-- Page Header -->
+    <section class="section" style="padding-top: 120px; padding-bottom: 40px; text-align: center;">
+        <div class="container">
+            <h1>Discover Events</h1>
+            <p style="color: var(--text-gray); max-width: 600px; margin: 10px auto;">Browse the hottest concerts,
+                matches, and shows happening across India.</p>
+
+            <!-- Filter Pills -->
+            <div class="hero-categories" style="justify-content: center; margin-top: 30px;">
+                <button class="category-pill active" onclick="filterEvents('all')">All</button>
+                <button class="category-pill" onclick="filterEvents('concerts')">Concerts</button>
+                <button class="category-pill" onclick="filterEvents('sports')">Sports</button>
+                <button class="category-pill" onclick="filterEvents('comedy')">Comedy</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Grid -->
+    <section class="section">
+        <div class="container">
+            <div class="event-grid">
+                <!-- Event 1 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=1'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop"
+                            alt="Concert">
+                        <span class="price-tag">From ₹2,500</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">SAT, 15 NOV • 7:00 PM</div>
+                        <h3 class="event-title">Arijit Singh Live</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> NSCI Dome, Mumbai</div>
+                    </div>
+                </div>
+
+                <!-- Event 2 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=2'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&h=400&fit=crop"
+                            alt="IPL">
+                        <span class="price-tag">From ₹1,200</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">SUN, 20 APR • 3:30 PM</div>
+                        <h3 class="event-title">MI vs CSK - IPL 2026</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> Wankhede Stadium, Mumbai
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=3'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop"
+                            alt="Concert">
+                        <span class="price-tag">From ₹1,800</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">FRI, 08 DEC • 8:00 PM</div>
+                        <h3 class="event-title">Bollywood Night Live</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> Gachibowli Stadium,
+                            Hyderabad</div>
+                    </div>
+                </div>
+
+                <!-- Event 4 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=4'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1507924538820-ede94a04019d?w=600&h=400&fit=crop"
+                            alt="Theater">
+                        <span class="price-tag">From ₹800</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">SAT, 30 NOV • 7:30 PM</div>
+                        <h3 class="event-title">Mughal-E-Azam Musical</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> NCPA, Mumbai</div>
+                    </div>
+                </div>
+
+                <!-- Event 5 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=5'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=600&h=400&fit=crop"
+                            alt="Comedy">
+                        <span class="price-tag">From ₹1,500</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">SUN, 12 JAN • 6:00 PM</div>
+                        <h3 class="event-title">Vir Das - Mind Fool Tour</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> Sirifort Aud, Delhi</div>
+                    </div>
+                </div>
+
+                <!-- Event 6 -->
+                <div class="event-card" onclick="location.href='event-details.html?id=6'">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1459749411177-8c29142af60e?w=600&h=400&fit=crop"
+                            alt="Concert">
+                        <span class="price-tag">From ₹5,000</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-date">SAT, 24 FEB • 8:30 PM</div>
+                        <h3 class="event-title">Coldplay World Tour</h3>
+                        <div class="event-location"><i class="fa-solid fa-location-dot"></i> DY Patil Stadium, Mumbai
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+    <script src="../../js/common.js"></script>
+    <script>
+        function filterEvents(category) {
+            // Update active pill
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === 'All')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Very simple filter (mock): Just randomize or alert for now since we don't have category attributes on cards easily reachable without parsing.
+            // Actually, let's add attributes to cards for cleaner demo.
+            alert('Filtering by ' + category + '... (Showing all for demo)');
+        }
+    </script>
+</body>
+
+</html>
