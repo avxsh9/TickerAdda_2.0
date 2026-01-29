@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="../../css/main.css">
     <link rel="stylesheet" href="../../css/seller.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (!localStorage.getItem('user')) {
+            window.location.href = '../auth/login.html';
+        }
+    </script>
 </head>
 
 <body>
@@ -28,17 +33,17 @@
                 <div
                     style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
                     <div style="color: var(--text-gray); margin-bottom: 10px;">Total Earnings</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #10B981;">₹12,450</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #10B981;">₹0</div>
                 </div>
                 <div
                     style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
                     <div style="color: var(--text-gray); margin-bottom: 10px;">Active Listings</div>
-                    <div style="font-size: 32px; font-weight: 700;">3</div>
+                    <div style="font-size: 32px; font-weight: 700;">0</div>
                 </div>
                 <div
                     style="background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
                     <div style="color: var(--text-gray); margin-bottom: 10px;">Tickets Sold</div>
-                    <div style="font-size: 32px; font-weight: 700;">8</div>
+                    <div style="font-size: 32px; font-weight: 700;">0</div>
                 </div>
             </div>
 
@@ -56,28 +61,10 @@
                             <th style="padding: 15px;">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="listingsTable">
                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <td style="padding: 15px; font-weight: 600;">Diljit Dosanjh - Born to Shine</td>
-                            <td style="padding: 15px;">12 Oct 2026</td>
-                            <td style="padding: 15px;">2</td>
-                            <td style="padding: 15px;">₹3,000</td>
-                            <td style="padding: 15px;"><span
-                                    style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Live</span>
-                            </td>
-                            <td style="padding: 15px;"><button class="btn btn-outline"
-                                    style="padding: 5px 10px; font-size: 12px;">Edit</button></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <td style="padding: 15px; font-weight: 600;">Ind vs Pak - World Cup</td>
-                            <td style="padding: 15px;">05 Nov 2026</td>
-                            <td style="padding: 15px;">1</td>
-                            <td style="padding: 15px;">₹15,000</td>
-                            <td style="padding: 15px;"><span
-                                    style="background: rgba(239, 68, 68, 0.2); color: #EF4444; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Sold</span>
-                            </td>
-                            <td style="padding: 15px;"><button class="btn btn-outline"
-                                    style="padding: 5px 10px; font-size: 12px;" disabled>View</button></td>
+                            <td colspan="6" style="padding: 20px; text-align: center; color: var(--text-gray);">No
+                                listings found.</td>
                         </tr>
                     </tbody>
                 </table>
