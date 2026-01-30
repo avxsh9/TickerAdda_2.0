@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function checkAuthStatus() {
     const user = JSON.parse(localStorage.getItem('user'));
-    const loginBtn = document.querySelector('a[href*="login.html"]');
+    // Use ID for reliability, fallback to href if ID missing (for safety)
+    const loginBtn = document.getElementById('loginBtn') || document.querySelector('a[href*="login.html"]');
 
     if (user && loginBtn) {
         // Change "Sign In" to "Logout"
@@ -89,40 +90,45 @@ function checkAuthStatus() {
             logout();
         });
 
-        const navLinks = document.querySelector('.nav-links');
+        const navLinks = document.getElementById('navLinks') || document.querySelector('.nav-links');
         if (navLinks) {
-            // Role-based Dashboard Link
-            const dashboardLink = document.createElement('a');
-            dashboardLink.className = 'nav-link';
+            // Get the static Dashboard Key
+            const dashboardLink = document.getElementById('dashboardLink');
+            const myTicketsLink = document.getElementById('myTicketsLink');
 
-            if (user.role === 'admin') {
-                dashboardLink.href = '/pages/admin/dashboard.html';
-                dashboardLink.innerHTML = '<i class="fas fa-tachometer-alt"></i> Admin';
-                dashboardLink.style.color = '#ef4444'; // Red for Admin
-            } else if (user.role === 'seller') {
+            if (dashboardLink) {
+                // Unhide it
+                dashboardLink.style.display = 'inline-block';
+
+                // USER REQUEST: Always show Seller Dashboard here
                 dashboardLink.href = '/pages/seller/dashboard.html';
-                dashboardLink.innerHTML = 'Dashboard';
-            } else {
-                dashboardLink.href = '/pages/buyer/dashboard.html';
-                dashboardLink.innerHTML = 'My Tickets';
+                dashboardLink.innerHTML = '<i class="fas fa-chart-line"></i> Seller Dashboard';
+                dashboardLink.style.fontWeight = 'bold';
+
+                // Check Admin Override
+                if (user.role === 'admin') {
+                    dashboardLink.href = '/pages/admin/dashboard.html';
+                    dashboardLink.innerHTML = '<i class="fas fa-tachometer-alt"></i> Admin';
+                    dashboardLink.style.color = '#ef4444';
+                }
             }
 
-            // Insert Dashboard link before Logout button
-            navLinks.insertBefore(dashboardLink, loginBtn);
+            // USER REQUEST: Always show My Tickets (Buyer Dashboard)
+            if (myTicketsLink) {
+                myTicketsLink.style.display = 'inline-block';
+            }
 
             // User Welcome Badge
-            const userBadge = document.createElement('span');
-            userBadge.className = 'nav-link';
-            userBadge.style.color = 'var(--primary)';
-            userBadge.textContent = `Hi, ${user.name.split(' ')[0]}`;
-            navLinks.insertBefore(userBadge, dashboardLink);
+            if (!document.getElementById('userBadge')) {
+                const userBadge = document.createElement('span');
+                userBadge.id = 'userBadge';
+                userBadge.className = 'nav-link';
+                userBadge.style.color = 'var(--primary)';
+                userBadge.textContent = `Hi, ${user.name.split(' ')[0]}`;
+                userBadge.style.marginRight = '10px'; // Add some spacing
 
-            // Remove static "My Tickets" link if it exists to avoid duplicates
-            const staticMyTickets = Array.from(navLinks.querySelectorAll('.nav-link')).find(l => l.textContent.includes('My Tickets'));
-            if (staticMyTickets && dashboardLink.innerHTML !== 'My Tickets') {
-                // If we inserted a specific dashboard link (Admin/Seller), hide the generic My Tickets or keep it?
-                // Actually, let's just helper method hide static links if we are injecting dynamic ones to be cleaner.
-                // For now, simple approach:
+                // Position: Left of Logout Button
+                navLinks.insertBefore(userBadge, loginBtn);
             }
         }
     }

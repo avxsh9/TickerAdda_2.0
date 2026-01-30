@@ -8,11 +8,16 @@
         </button>
         <div class="nav-links" id="navLinks">
             <a href="/pages/public/events.html" class="nav-link">Events</a>
-            <!-- My Tickets injected via JS if logged in -->
+            <!-- Dashboard Link (Hidden by default, shown via JS) -->
+            <a href="#" class="nav-link" id="dashboardLink" style="display: none;">Dashboard</a>
+            <a href="/pages/buyer/dashboard.html" class="nav-link" id="myTicketsLink" style="display: none;">My
+                Tickets</a>
+
             <a href="/pages/seller/sell-ticket.html" class="btn btn-primary" style="margin-right: 10px;">
                 <i class="fas fa-plus-circle"></i> Sell Tickets
             </a>
-            <a href="/pages/auth/login.html" class="btn btn-outline" style="margin-left: 10px;">Sign In</a>
+            <a href="/pages/auth/login.html" class="btn btn-outline" id="loginBtn" style="margin-left: 10px;">Sign
+                In</a>
         </div>
     </div>
 </nav>
