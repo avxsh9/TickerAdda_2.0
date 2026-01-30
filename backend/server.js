@@ -43,7 +43,41 @@ app.get('*', (req, res) => {
 
 // Connect Database
 const connectDB = require('./config/db');
-connectDB();
+connectDB().then(() => {
+    seedAdmin();
+});
+
+// Seed Admin User
+const User = require('./models/User');
+const bcrypt = require('bcryptjs');
+
+async function seedAdmin() {
+    try {
+        const adminEmail = 'admin@ticketadda.in';
+        const existingAdmin = await User.findOne({ email: adminEmail });
+
+        if (!existingAdmin) {
+            console.log('Admin user not found. Creating...');
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('Avi@98711', salt);
+
+            const newAdmin = new User({
+                name: 'Avinash',
+                email: adminEmail,
+                password: hashedPassword,
+                role: 'admin',
+                phone: '9999999999' // Dummy phone
+            });
+
+            await newAdmin.save();
+            console.log('✅ Admin User Created Successfully: admin@ticketadda.in');
+        } else {
+            console.log('ℹ️ Admin User already exists.');
+        }
+    } catch (err) {
+        console.error('❌ Error seeding admin:', err);
+    }
+}
 
 // Start Server
 app.listen(PORT, () => {
