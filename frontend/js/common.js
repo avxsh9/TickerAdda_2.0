@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 navPlaceholder.innerHTML = data;
                 initStickyNavbar();
+                setupMobileMenu(); // Setup toggle AFTER HTML is injected
                 checkAuthStatus(); // Run AFTER navbar is injected
             })
             .catch(err => console.error('Error loading navbar:', err));
@@ -42,6 +43,35 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(err => console.error('Error loading footer:', err));
     }
+
+    // Setup Navbar Logic (Logout, etc.)
+    const user = JSON.parse(localStorage.getItem('user'));
+    const navLinks = document.querySelector('.nav-links');
+    const menuToggle = document.querySelector('.menu-toggle');
+
+    // Setup Mobile Menu Logic
+    function setupMobileMenu() {
+        const navLinks = document.querySelector('.nav-links');
+        const menuToggle = document.querySelector('.menu-toggle');
+
+        if (menuToggle && navLinks) {
+            // Remove old listeners to be safe (though not strictly necessary on fresh load)
+            const newToggle = menuToggle.cloneNode(true);
+            menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+
+            newToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = newToggle.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+    }
 });
 
 function checkAuthStatus() {
@@ -49,40 +79,51 @@ function checkAuthStatus() {
     const loginBtn = document.querySelector('a[href*="login.html"]');
 
     if (user && loginBtn) {
-        // Change "Sign In" to "Profile/Logout"
-        loginBtn.textContent = 'Logout';
+        // Change "Sign In" to "Logout"
+        loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
         loginBtn.href = '#';
         loginBtn.classList.remove('btn-outline');
-        loginBtn.classList.add('btn-primary'); // Make it pop
+        loginBtn.classList.add('btn-primary');
         loginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             logout();
         });
 
-        // Add User Name if possible
         const navLinks = document.querySelector('.nav-links');
         if (navLinks) {
+            // Role-based Dashboard Link
+            const dashboardLink = document.createElement('a');
+            dashboardLink.className = 'nav-link';
+
             if (user.role === 'admin') {
-                const adminLink = document.createElement('a');
-                adminLink.href = '/pages/admin/approve-tickets.html';
-                adminLink.className = 'nav-link';
-                adminLink.style.color = '#ef4444';
-                adminLink.innerHTML = '<i class="fas fa-shield-alt"></i> Admin Panel';
-                navLinks.insertBefore(adminLink, navLinks.firstChild);
+                dashboardLink.href = '/pages/admin/dashboard.html';
+                dashboardLink.innerHTML = '<i class="fas fa-tachometer-alt"></i> Admin';
+                dashboardLink.style.color = '#ef4444'; // Red for Admin
+            } else if (user.role === 'seller') {
+                dashboardLink.href = '/pages/seller/dashboard.html';
+                dashboardLink.innerHTML = 'Dashboard';
+            } else {
+                dashboardLink.href = '/pages/buyer/dashboard.html';
+                dashboardLink.innerHTML = 'My Tickets';
             }
 
-            // ADD DASHBOARD LINK (Seller View)
-            const dashboardLink = document.createElement('a');
-            dashboardLink.href = '/pages/seller/dashboard.html';
-            dashboardLink.className = 'nav-link';
-            dashboardLink.innerHTML = 'Dashboard';
+            // Insert Dashboard link before Logout button
             navLinks.insertBefore(dashboardLink, loginBtn);
 
+            // User Welcome Badge
             const userBadge = document.createElement('span');
-            userBadge.style.color = '#fff';
-            userBadge.style.marginLeft = '10px';
-            userBadge.textContent = 'Hi, ' + user.name;
-            navLinks.insertBefore(userBadge, loginBtn);
+            userBadge.className = 'nav-link';
+            userBadge.style.color = 'var(--primary)';
+            userBadge.textContent = `Hi, ${user.name.split(' ')[0]}`;
+            navLinks.insertBefore(userBadge, dashboardLink);
+
+            // Remove static "My Tickets" link if it exists to avoid duplicates
+            const staticMyTickets = Array.from(navLinks.querySelectorAll('.nav-link')).find(l => l.textContent.includes('My Tickets'));
+            if (staticMyTickets && dashboardLink.innerHTML !== 'My Tickets') {
+                // If we inserted a specific dashboard link (Admin/Seller), hide the generic My Tickets or keep it?
+                // Actually, let's just helper method hide static links if we are injecting dynamic ones to be cleaner.
+                // For now, simple approach:
+            }
         }
     }
 }

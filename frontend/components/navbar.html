@@ -3,10 +3,13 @@
         <a href="/pages/public/index.html" class="logo">
             <img src="/public/images/logo.png" alt="TickerAdda">
         </a>
-        <div class="nav-links">
+        <button class="menu-toggle" aria-label="Toggle Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="/pages/public/events.html" class="nav-link">Events</a>
-            <a href="/pages/buyer/dashboard.html" class="nav-link">My Tickets</a>
-            <a href="/pages/seller/sell-ticket.html" class="btn btn-primary">
+            <!-- My Tickets injected via JS if logged in -->
+            <a href="/pages/seller/sell-ticket.html" class="btn btn-primary" style="margin-right: 10px;">
                 <i class="fas fa-plus-circle"></i> Sell Tickets
             </a>
             <a href="/pages/auth/login.html" class="btn btn-outline" style="margin-left: 10px;">Sign In</a>
