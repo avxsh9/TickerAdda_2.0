@@ -72,7 +72,14 @@ async function seedAdmin() {
             await newAdmin.save();
             console.log('✅ Admin User Created Successfully: admin@ticketadda.in');
         } else {
-            console.log('ℹ️ Admin User already exists.');
+            // FORCE UPDATE ROLE (Fix for existing user issue)
+            if (existingAdmin.role !== 'admin') {
+                existingAdmin.role = 'admin';
+                await existingAdmin.save();
+                console.log('🔄 Updated existing user to Admin Role.');
+            } else {
+                console.log('ℹ️ Admin User already exists and has correct role.');
+            }
         }
     } catch (err) {
         console.error('❌ Error seeding admin:', err);
