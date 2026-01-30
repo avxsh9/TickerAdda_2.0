@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const TicketSchema = new mongoose.Schema({
     event: { type: String, required: true },
+    type: { type: String, enum: ['music', 'sports', 'comedy', 'other'], default: 'other' },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },

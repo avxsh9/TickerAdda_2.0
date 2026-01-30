@@ -11,9 +11,9 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, phone, password, role } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !phone || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }
 
@@ -27,6 +27,7 @@ exports.register = async (req, res) => {
         user = new User({
             name,
             email,
+            phone,
             password,
             role: role || 'buyer' // Default to buyer if not specified
         });

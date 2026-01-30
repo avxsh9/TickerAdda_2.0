@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.querySelector('button[class="btn btn-primary"]');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
-            const event = document.querySelector('select').value;
+            const event = document.querySelector('input[name="event"]').value;
             const category = document.querySelector('input[placeholder="e.g. Diamond, Block A"]').value;
             const seat = document.querySelector('input[placeholder="e.g. A-12"]').value;
             const quantity = document.querySelector('input[type="number"]').value;
@@ -110,7 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Create FormData
                 const formData = new FormData();
                 formData.append('event', event);
-                formData.append('category', category);
+                const eventType = document.querySelector('select[name="type"]').value; // capture type
+                formData.append('type', eventType);
+                formData.append('category', category); // This is section (e.g. VIP)
                 formData.append('seat', seat);
                 formData.append('quantity', quantity);
                 formData.append('price', price);

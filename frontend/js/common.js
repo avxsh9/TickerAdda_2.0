@@ -62,15 +62,21 @@ function checkAuthStatus() {
         // Add User Name if possible
         const navLinks = document.querySelector('.nav-links');
         if (navLinks) {
-            // Check for Admin Role and Add Dashboard Link
             if (user.role === 'admin') {
                 const adminLink = document.createElement('a');
-                adminLink.href = '/pages/admin/approve-tickets.html'; // Direct compatibility with existing flows
+                adminLink.href = '/pages/admin/approve-tickets.html';
                 adminLink.className = 'nav-link';
-                adminLink.style.color = '#ef4444'; // Make it distinct (Red/Orange)
+                adminLink.style.color = '#ef4444';
                 adminLink.innerHTML = '<i class="fas fa-shield-alt"></i> Admin Panel';
-                navLinks.insertBefore(adminLink, navLinks.firstChild); // Add to start or before "Sell Tickets"
+                navLinks.insertBefore(adminLink, navLinks.firstChild);
             }
+
+            // ADD DASHBOARD LINK (Seller View)
+            const dashboardLink = document.createElement('a');
+            dashboardLink.href = '/pages/seller/dashboard.html';
+            dashboardLink.className = 'nav-link';
+            dashboardLink.innerHTML = 'Dashboard';
+            navLinks.insertBefore(dashboardLink, loginBtn);
 
             const userBadge = document.createElement('span');
             userBadge.style.color = '#fff';
@@ -135,4 +141,81 @@ function getEventImageUrl(eventName) {
 
     // Default Fallback
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(eventName)}&background=random&size=512`;
+}
+
+// Global Buy Ticket Logic
+async function buyTicket(ticketId, price) {
+    const token = localStorage.getItem('token');
+
+    // 1. Check Login
+    if (!token) {
+        Swal.fire({
+            title: 'Login Required',
+            text: 'You need to login to buy tickets!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Login Now'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '../auth/login.html';
+            }
+        });
+        return;
+    }
+
+    // 2. Confirm Purchase
+    const result = await Swal.fire({
+        title: 'Confirm Purchase?',
+        text: `You are about to buy this ticket for ₹${price}.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Buy it!',
+        confirmButtonColor: '#3b82f6'
+    });
+
+    if (!result.isConfirmed) return;
+
+    // 3. Call API
+    try {
+        Swal.showLoading();
+
+        const res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': token
+            },
+            body: JSON.stringify({ ticketId })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            Swal.fire({
+                title: 'Purchase Successful! 🎉',
+                html: `
+                    <div style="text-align: left; margin-top: 20px;">
+                        <p>You have successfully secured your ticket.</p>
+                        <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+                        <h4 style="color: var(--primary-color);">Seller Details:</h4>
+                        <p><strong>Name:</strong> ${data.seller.name}</p>
+                        <p><strong>Mobile:</strong> ${data.seller.phone || 'N/A'}</p>
+                        <p><strong>Email:</strong> ${data.seller.email}</p>
+                        <br>
+                        <p style="font-size: 0.9em; color: #888;">You can contact the seller for further coordination.</p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Go to My Tickets'
+            }).then(() => {
+                window.location.href = '../buyer/dashboard.html';
+            });
+        } else {
+            Swal.fire('Error', data.msg || 'Failed to purchase ticket', 'error');
+        }
+
+    } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'Server Error', 'error');
+    }
 }

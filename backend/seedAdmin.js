@@ -1,38 +1,30 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
+const path = require('path');
 const User = require('./models/User');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const seedAdmin = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/tickeradda');
         console.log('MongoDB Connected...');
 
-        const email = 'admin@ticketadda.in';
-        const password = 'Avi@98711';
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('Avi@98711', salt);
 
-        let user = await User.findOne({ email });
-        if (user) {
-            console.log('Admin user already exists');
-            process.exit();
-        }
-
-        user = new User({
+        const admin = new User({
             name: 'Super Admin',
-            email,
-            password,
+            email: 'admin@ticketadda.in',
+            password: hashedPassword,
+            phone: '+910000000000',
             role: 'admin'
         });
 
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
-
-        await user.save();
-        console.log('Admin user created successfully');
+        await admin.save();
+        console.log('Super Admin Created: admin@ticketadda.in');
         process.exit();
-
     } catch (err) {
         console.error(err);
         process.exit(1);

@@ -3,13 +3,21 @@ document.getElementById('signupForm').addEventListener('submit', async function 
 
     const name = this.querySelector('input[name="name"]').value;
     const email = this.querySelector('input[name="email"]').value;
+    const phoneInput = this.querySelector('input[name="phone"]').value;
     const password = this.querySelector('input[name="password"]').value;
     const submitBtn = this.querySelector('button[type="submit"]');
 
-    if (!name || !email || !password) {
+    if (!name || !email || !phoneInput || !password) {
         alert('Please fill in all fields');
         return;
     }
+
+    if (phoneInput.length !== 10) {
+        alert('Please enter a valid 10-digit phone number');
+        return;
+    }
+
+    const phone = '+91' + phoneInput;
 
     try {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
@@ -23,6 +31,7 @@ document.getElementById('signupForm').addEventListener('submit', async function 
             body: JSON.stringify({
                 name,
                 email,
+                phone,
                 password,
                 role: 'buyer' // Default for public signup
             })

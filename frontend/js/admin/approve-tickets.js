@@ -57,45 +57,96 @@ async function loadTickets(type) {
             }
 
             // Image Logic
-            // Image Logic
             // Check if getEventImageUrl is defined, otherwise fallback
             let fallbackImage = 'https://via.placeholder.com/400x200?text=No+Proof';
             if (typeof getEventImageUrl === 'function') {
                 fallbackImage = getEventImageUrl(ticket.event);
             }
 
-            const imageUrl = ticket.fileUrl ? `/${ticket.fileUrl}` : fallbackImage;
+            let imageUrl = fallbackImage;
+            let isPdf = false;
+            let filename = '';
+
+            if (ticket.fileUrl) {
+                // ROBUST PATH FIX:
+                // 1. Normalize slashes
+                let cleanPath = ticket.fileUrl.replace(/\\/g, '/');
+                // 2. Encoded spaces
+                cleanPath = cleanPath.replace(/ /g, '%20');
+
+                // 3. Extract just the filename (safest approach since all files are in uploads/)
+                filename = cleanPath.split('/').pop();
+
+                // 4. Construct URL
+                imageUrl = `/uploads/${filename}`;
+
+                // 5. Check if PDF
+                if (filename.toLowerCase().endsWith('.pdf')) {
+                    isPdf = true;
+                }
+            }
+
+            // Render Logic
+            let mediaContent = '';
+            // Cache bust for images to prevent 404 caching
+            const timestamp = new Date().getTime();
+
+            // Append timestamp to imageUrl if it's not a placeholder
+            if (!imageUrl.includes('placeholder')) {
+                imageUrl = `${imageUrl}?t=${timestamp}`;
+            }
+
+            if (isPdf) {
+                mediaContent = `
+                    <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#222; cursor:pointer;" onclick="window.open('${imageUrl}', '_blank')">
+                        <i class="fas fa-file-pdf" style="font-size:3rem; color:#e11d48; margin-bottom:10px;"></i>
+                        <span style="color:#aaa; font-size:0.8rem;">Click to View PDF</span>
+                    </div>`;
+            } else {
+                mediaContent = `
+                    <img src="${imageUrl}" 
+                        alt="Ticket Proof" 
+                        style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" 
+                        onclick="openModal('${imageUrl}')"
+                        onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'; this.parentElement.style.border='2px solid red';">
+                `;
+            }
 
             html += `
                 <div class="ticket-card">
                     <div class="ticket-image" style="height: 150px; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <img src="${imageUrl}" alt="Ticket Proof" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open('${imageUrl}', '_blank')">
+                        ${mediaContent}
                     </div>
                     <div class="ticket-status-bar ${statusClass}"></div>
                     <div class="card-body">
                         <div class="card-header">
                             <div>
                                 <div class="event-name">${ticket.event}</div>
-                                <div class="ticket-id">ID: ${ticket._id.slice(-6).toUpperCase()}</div>
+                                <div class="ticket-id">ID: ${ticket._id.slice(-6).toUpperCase()}<br>
+                                <span style="font-size:0.7em; color:#666;">File: ${filename || 'None'}</span></div>
                             </div>
-                            <div class="card-price">₹${ticket.price}</div>
+                            <div class="card-price">₹${ticket.price} <span style="font-size:0.6em; color:#888;">/ tkt</span></div>
                         </div>
 
                         <div class="info-row"><i class="fas fa-calendar-alt"></i> ${new Date().toLocaleDateString()}</div>
-                        <div class="info-row"><i class="fas fa-chair"></i> ${ticket.seat || 'General'}</div>
+                        <div class="info-row">
+                            <span><i class="fas fa-chair"></i> ${ticket.seat || 'General'}</span>
+                            <span style="margin-left:10px; color:#f59e0b;"><i class="fas fa-layer-group"></i> Qty: ${ticket.quantity}</span>
+                        </div>
                         <div class="info-row"><i class="fas fa-tag"></i> ${ticket.category}</div>
 
-                        <div class="seller-info">
+                        <div class="seller-info" style="margin-top:15px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);">
                             <div class="seller-avatar">${ticket.seller?.name?.charAt(0) || 'U'}</div>
                             <div>
                                 <div class="seller-name">${ticket.seller?.name || 'Unknown Seller'}</div>
-                                <div class="seller-email">${ticket.seller?.email || 'No Email'}</div>
+                                <div class="seller-email" style="font-size:0.8em; color:#aaa;">${ticket.seller?.email || 'No Email'}</div>
+                                <div class="seller-phone" style="font-size:0.8em; color:#10B981;"><i class="fas fa-phone-alt"></i> ${ticket.seller?.phone || 'N/A'}</div>
                             </div>
                         </div>
 
                         <div class="card-actions">
-                            <button class="btn-action" style="background: rgba(255,255,255,0.1); color: white;" onclick="openModal('${imageUrl}')">
-                                <i class="fas fa-eye"></i> View Proof
+                            <button class="btn-action" style="background: rgba(255,255,255,0.1); color: white;" onclick="${isPdf ? `window.open('${imageUrl}', '_blank')` : `openModal('${imageUrl}')`}">
+                                <i class="fas fa-eye"></i> ${isPdf ? 'View PDF' : 'View Proof'}
                             </button>
                             ${actionsHtml}
                         </div>

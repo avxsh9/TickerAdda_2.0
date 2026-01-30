@@ -20,3 +20,22 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ msg: 'Server Error' });
     }
 };
+// @desc    Update user role (Admin only)
+// @route   PUT /api/users/:id/role
+// @access  Private/Admin
+exports.updateUserRole = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        user.role = req.body.role || user.role;
+        await user.save();
+
+        res.json({ msg: 'User role updated', user });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};

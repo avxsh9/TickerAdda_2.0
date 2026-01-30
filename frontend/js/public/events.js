@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (category === 'all') {
                     renderTickets(tickets);
                 } else {
-                    const filtered = tickets.filter(t => t.category.toLowerCase() === category.toLowerCase());
+                    const filtered = tickets.filter(t => t.type === category);
                     renderTickets(filtered);
                 }
             });
@@ -48,11 +48,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             const eventName = ticket.event;
             const imageUrl = getEventImageUrl(eventName);
 
+            const isSold = ticket.status === 'sold';
+            const statusBadge = isSold
+                ? '<span class="badge badge-category" style="position: relative; margin: 10px; background: #dc2626; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white;">SOLD OUT</span>'
+                : `<span class="badge badge-category" style="position: relative; margin: 10px; background: rgba(59, 130, 246, 0.9); padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white;">LIVE</span>`;
+
+            const buttonHtml = isSold
+                ? '<button class="btn btn-sm btn-outline-danger" disabled>Sold Out</button>'
+                : `<button class="btn btn-sm btn-primary" onclick="buyTicket('${ticket._id}', '${ticket.price}')">Buy Ticket</button>`;
+
             html += `
-                <div class="card event-card">
+                <div class="card event-card" style="${isSold ? 'opacity: 0.7;' : ''}">
                     <div class="card-image" style="height: 200px; background-image: url('${imageUrl}'); background-size: cover; background-position: center; display: flex; align-items: flex-end; justify-content: flex-end; position: relative;">
                          <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);"></div>
-                        <span class="badge badge-category" style="position: relative; margin: 10px; background: rgba(59, 130, 246, 0.9); padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white;">${ticket.category}</span>
+                        ${statusBadge}
                     </div>
                     <div class="card-content">
                         <h3>${eventName}</h3>
@@ -60,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <p class="location"><i class="fas fa-map-marker-alt"></i> ${ticket.seat || 'General Admission'}</p>
                         <div class="price-action">
                             <span class="price">₹${ticket.price}</span>
-                            <button class="btn btn-sm btn-primary">Buy Ticket</button>
+                            ${buttonHtml}
                         </div>
                     </div>
                 </div>
@@ -70,4 +79,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
+// buyTicket is now in common.js

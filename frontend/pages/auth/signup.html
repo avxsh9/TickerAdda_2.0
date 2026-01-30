@@ -31,6 +31,15 @@
                         <input type="email" name="email" placeholder="Enter your email"
                             style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
                     </div>
+                    <div style="margin-bottom: 15px; text-align: left;">
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 5px;">Phone Number</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" value="+91" disabled
+                                style="width: 60px; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 8px; color: #aaa; text-align: center;">
+                            <input type="tel" name="phone" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10"
+                                style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                        </div>
+                    </div>
                     <div style="margin-bottom: 25px; text-align: left;">
                         <label style="display: block; color: var(--text-gray); margin-bottom: 5px;">Password</label>
                         <input type="password" name="password" placeholder="Create a password"

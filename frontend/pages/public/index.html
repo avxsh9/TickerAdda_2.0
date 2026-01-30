@@ -12,20 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="../../css/main.css">
     <link rel="icon" type="image/png" href="../../public/images/logo.png">
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-content">
             <a href="/pages/public/index.html" class="logo">
                 <img src="/public/images/logo.png" alt="TickerAdda">
             </a>
-
-            <!-- Search removed as requested for navbar -->
-
             <div class="nav-links">
                 <a href="/pages/public/events.html" class="nav-link">Events</a>
                 <a href="/pages/buyer/dashboard.html" class="nav-link">My Tickets</a>
@@ -37,7 +34,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <span class="hero-badge"><i class="fa-solid fa-rocket"></i> Faster, safer, bug-free</span>
@@ -50,10 +46,10 @@
             </div>
 
             <div class="hero-categories">
-                <button class="category-pill active">All events</button>
-                <button class="category-pill">Sports</button>
-                <button class="category-pill">Concerts</button>
-                <button class="category-pill">Comedy</button>
+                <button class="category-pill active" data-category="all">All</button>
+                <button class="category-pill" data-category="music">Music</button>
+                <button class="category-pill" data-category="sports">Sports</button>
+                <button class="category-pill" data-category="comedy">Comedy</button>
             </div>
         </div>
     </section>

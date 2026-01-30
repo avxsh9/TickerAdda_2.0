@@ -19,14 +19,30 @@
                 <form id="sellTicketForm">
                     <!-- Event Selection -->
                     <div style="margin-bottom: 25px;">
-                        <label style="display: block; color: var(--text-gray); margin-bottom: 10px;">Select
-                            Event</label>
-                        <select
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 10px;">Select or Type
+                            Event Name</label>
+                        <input list="events" name="event" placeholder="Choose from list or type your own..."
                             style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
-                            <option value="">Choose an event...</option>
-                            <option value="Arijit Singh Live">Arijit Singh Live - Mumbai</option>
-                            <option value="IPL 2026: MI vs CSK">IPL 2026: MI vs CSK</option>
-                            <option value="Coldplay World Tour">Coldplay World Tour</option>
+                        <datalist id="events">
+                            <option value="Arijit Singh Live - Mumbai">
+                            <option value="IPL 2026: MI vs CSK">
+                            <option value="Coldplay World Tour">
+                            <option value="Diljit Dosanjh - Dil-Luminati">
+                            <option value="Sunburn Goa 2026">
+                            <option value="Ed Sheeran - Mathematics Tour">
+                        </datalist>
+                    </div>
+
+                    <!-- Event Type Selection -->
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; color: var(--text-gray); margin-bottom: 10px;">Event
+                            Category</label>
+                        <select name="type"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+                            <option value="music">Music / Concert</option>
+                            <option value="sports">Sports</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
 

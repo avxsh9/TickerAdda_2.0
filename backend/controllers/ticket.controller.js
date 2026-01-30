@@ -6,7 +6,7 @@ const User = require('../models/User');
 // @access  Private
 exports.createTicket = async (req, res) => {
     try {
-        const { event, date, time, venue, description, price, type, quantity, seat, row, category } = req.body;
+        const { event, type, date, time, venue, description, price, quantity, seat, row, category } = req.body;
 
         // Simple validation
         if (!event || !price || !quantity) {
@@ -16,6 +16,7 @@ exports.createTicket = async (req, res) => {
         const ticket = new Ticket({
             seller: req.user.id,
             event,
+            type: type || 'other',
             date,
             time,
             venue,
@@ -43,7 +44,7 @@ exports.createTicket = async (req, res) => {
 // @access  Public
 exports.getApprovedTickets = async (req, res) => {
     try {
-        const tickets = await Ticket.find({ status: 'approved' }).sort({ createdAt: -1 });
+        const tickets = await Ticket.find({ status: { $in: ['approved', 'sold'] } }).sort({ createdAt: -1 });
         res.json(tickets);
     } catch (err) {
         console.error(err.message);
@@ -57,7 +58,7 @@ exports.getApprovedTickets = async (req, res) => {
 exports.getPendingTickets = async (req, res) => {
     try {
         const tickets = await Ticket.find({ status: 'pending' })
-            .populate('seller', 'name email')
+            .populate('seller', 'name email phone')
             .sort({ createdAt: 1 }); // Oldest first
         res.json(tickets);
     } catch (err) {
@@ -107,10 +108,32 @@ exports.getTicketHistory = async (req, res) => {
 // @desc    Get tickets for logged in seller
 // @route   GET /api/tickets/my-tickets
 // @access  Private (Seller)
+// @desc    Get my listed tickets (Seller)
+// @route   GET /api/tickets/my-tickets
+// @access  Private
 exports.getMyTickets = async (req, res) => {
     try {
         const tickets = await Ticket.find({ seller: req.user.id }).sort({ createdAt: -1 });
-        res.json(tickets);
+
+        // Enrich with Buyer Info if Sold
+        // We need to fetch orders for sold tickets
+        const enrichedTickets = await Promise.all(tickets.map(async (ticket) => {
+            if (ticket.status === 'sold') {
+                const Order = require('../models/Order'); // Lazy load to avoid circular dep if any
+                const order = await Order.findOne({ ticket: ticket._id }).populate('buyer', 'name email phone');
+                if (order && order.buyer) {
+                    return {
+                        ...ticket.toObject(),
+                        buyerName: order.buyer.name,
+                        buyerEmail: order.buyer.email,
+                        buyerPhone: order.buyer.phone
+                    };
+                }
+            }
+            return ticket;
+        }));
+
+        res.json(enrichedTickets);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
