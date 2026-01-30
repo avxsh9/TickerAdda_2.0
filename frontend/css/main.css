@@ -521,26 +521,28 @@ ul {
 }
 
 .feature-box {
-    padding: 30px;
+    padding: 24px;
+    /* Reduced padding */
     background: rgba(255, 255, 255, 0.015);
     border-radius: 20px;
     border: 1px solid transparent;
     transition: 0.3s;
+    height: 100%;
+    /* Ensure uniform height */
 }
 
-.feature-box:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.05);
-}
+/* ... */
 
 .feature-icon {
-    font-size: 32px;
-    margin-bottom: 20px;
+    font-size: 28px;
+    /* Slightly smaller icon */
+    margin-bottom: 16px;
     color: var(--primary);
     background: rgba(59, 130, 246, 0.1);
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
+    width: 60px;
+    /* Smaller circle */
+    height: 60px;
+    line-height: 60px;
     border-radius: 50%;
     margin-left: auto;
     margin-right: auto;
